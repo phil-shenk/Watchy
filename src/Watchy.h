@@ -30,7 +30,6 @@ class Watchy {
         static DS3232RTC RTC;
         static GxEPD2_BW<GxEPD2_154_D67, GxEPD2_154_D67::HEIGHT> display;
         tmElements_t currentTime;
-	    uint8_t workState = MANAGING_STATE;
     public:
         Watchy();
         void init(String datetime = "");
@@ -38,6 +37,8 @@ class Watchy {
         float getBatteryVoltage();
         void vibMotor(uint8_t intervalMs = 100, uint8_t length = 20);
 
+        void updateWorkState();
+        void drawWorkState();
         void handleButtonPress();
         void showMenu(byte menuIndex, bool partialRefresh);
         void showFastMenu(byte menuIndex);
@@ -63,6 +64,7 @@ class Watchy {
 };
 
 extern RTC_DATA_ATTR int guiState;
+extern RTC_DATA_ATTR int workState;
 extern RTC_DATA_ATTR int menuIndex;
 extern RTC_DATA_ATTR BMA423 sensor;
 extern RTC_DATA_ATTR bool WIFI_CONFIGURED;

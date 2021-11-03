@@ -16,7 +16,7 @@ void WatchyPhil::drawWatchFace() {
 	drawTime();
 	drawDate();
 	drawSteps();
-	drawWorkState();
+	//drawWorkState();
 	drawWeather();
 	drawBattery();
 	display.drawBitmap(120, 77, WIFI_CONFIGURED ? wifi : wifioff, 26, 18, DARKMODE ? GxEPD_WHITE : GxEPD_BLACK);
@@ -81,22 +81,7 @@ void WatchyPhil::drawSteps() {
 	display.setCursor(35, 190);
 	display.println(stepCount);
 }
-void WatchyPhil::drawWorkState() {
-	display.setFont(&FreeMonoBold9pt7b);
-	display.setCursor(100, 154);
-	if (workState == VIBING_STATE) {
-		display.println("VIBING");
-	}
-	else if (workState == HYPERVISING_STATE) {
-		display.println("HYPERV.");
-	}
-	else if (workState == MANAGING_STATE) {
-		display.println("MANAGING");
-	}
-	else if (workState == WORKING_STATE) {
-		display.println("WORKING");
-	}
-}
+
 void WatchyPhil::drawBattery() {
 	display.drawBitmap(154, 73, battery, 37, 21, DARKMODE ? GxEPD_WHITE : GxEPD_BLACK);
 	display.fillRect(159, 78, 27, BATTERY_SEGMENT_HEIGHT, DARKMODE ? GxEPD_BLACK : GxEPD_WHITE);//clear battery segments

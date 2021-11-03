@@ -4,6 +4,7 @@ DS3232RTC Watchy::RTC(false);
 GxEPD2_BW<GxEPD2_154_D67, GxEPD2_154_D67::HEIGHT> Watchy::display(GxEPD2_154_D67(CS, DC, RESET, BUSY));
 
 RTC_DATA_ATTR int guiState;
+RTC_DATA_ATTR int workState = MANAGING_STATE;
 RTC_DATA_ATTR int menuIndex;
 RTC_DATA_ATTR BMA423 sensor;
 RTC_DATA_ATTR bool WIFI_CONFIGURED;
@@ -88,6 +89,35 @@ void Watchy::deepSleep(){
   esp_deep_sleep_start();
 }
 
+/** 
+ * attempting to only update
+ */ 
+void Watchy::updateWorkState(){
+  display.init(0, false); //_initial_refresh to false to prevent full update on init
+  display.setFullWindow();
+  drawWorkState();
+  display.display(true); //partial refresh
+  display.hibernate();
+  guiState = WATCHFACE_STATE;
+}
+
+void Watchy::drawWorkState() {
+	display.setFont(&FreeMonoBold9pt7b);
+	display.setCursor(100, 154);
+	if (workState == VIBING_STATE) {
+		display.println("VIBING");
+	}
+	else if (workState == HYPERVISING_STATE) {
+		display.println("HYPERV.");
+	}
+	else if (workState == MANAGING_STATE) {
+		display.println("MANAGING");
+	}
+	else if (workState == WORKING_STATE) {
+		display.println("WORKING");
+	}
+}
+
 void Watchy::_rtcConfig(String datetime){
     if(datetime != NULL){
         const time_t FUDGE(30);//fudge factor to allow for upload time, etc. (seconds, YMMV)
@@ -157,9 +187,10 @@ void Watchy::handleButtonPress(){
       showMenu(menuIndex, false);//exit to menu if already in app
     }else if(guiState == WATCHFACE_STATE){ // BACK -> VIBING_STATE
       workState = VIBING_STATE;
-      RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
-      RTC.read(currentTime);
-      showWatchFace(true);
+      //RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
+      //RTC.read(currentTime);
+      //showWatchFace(true);
+      updateWorkState();
     }
   }
   //Up Button
@@ -173,14 +204,16 @@ void Watchy::handleButtonPress(){
     }else if(guiState == WATCHFACE_STATE){ // UP -> up the work list
       if (workState == WORKING_STATE){
         workState = MANAGING_STATE;
-        RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
-        RTC.read(currentTime);
-        showWatchFace(true);
+        //RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
+        //RTC.read(currentTime);
+        //showWatchFace(true);
+        updateWorkState();
       } else if (workState == MANAGING_STATE) {
         workState = HYPERVISING_STATE;
-        RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
-        RTC.read(currentTime);
-        showWatchFace(true);
+        //RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
+        //RTC.read(currentTime);
+        //showWatchFace(true);
+        updateWorkState();
       }
       // don't do anything if in vibe or hypervising state
     }
@@ -196,14 +229,16 @@ void Watchy::handleButtonPress(){
     }else if(guiState == WATCHFACE_STATE){ // DOWN -> down the work list
       if (workState == HYPERVISING_STATE){
         workState = MANAGING_STATE;
-        RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
-        RTC.read(currentTime);
-        showWatchFace(true);
+        //RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
+        //RTC.read(currentTime);
+        //showWatchFace(true);
+        updateWorkState();
       } else if (workState == MANAGING_STATE) {
         workState = WORKING_STATE;
-        RTC.alarm(ALARM_2);
-        RTC.read(currentTime);
-        showWatchFace(true);
+        //RTC.alarm(ALARM_2);
+        //RTC.read(currentTime);
+        //showWatchFace(true);
+        updateWorkState();
       }
     }
   }
@@ -623,6 +658,7 @@ void Watchy::showWatchFace(bool partialRefresh){
   display.init(0, false); //_initial_refresh to false to prevent full update on init
   display.setFullWindow();
   drawWatchFace();
+  drawWorkState();
   display.display(partialRefresh); //partial refresh
   display.hibernate();
   guiState = WATCHFACE_STATE;
