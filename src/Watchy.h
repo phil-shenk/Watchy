@@ -30,7 +30,7 @@ class Watchy {
         static DS3232RTC RTC;
         static GxEPD2_BW<GxEPD2_154_D67, GxEPD2_154_D67::HEIGHT> display;
         tmElements_t currentTime;
-	    uint8_t workState = VIBING_STATE;
+	    uint8_t workState = MANAGING_STATE;
     public:
         Watchy();
         void init(String datetime = "");

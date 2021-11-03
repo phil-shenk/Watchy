@@ -157,6 +157,7 @@ void Watchy::handleButtonPress(){
       showMenu(menuIndex, false);//exit to menu if already in app
     }else if(guiState == WATCHFACE_STATE){ // BACK -> VIBING_STATE
       workState = VIBING_STATE;
+      RTC.read(currentTime);
       showWatchFace(true);
     }
   }
@@ -171,9 +172,11 @@ void Watchy::handleButtonPress(){
     }else if(guiState == WATCHFACE_STATE){ // UP -> up the work list
       if (workState == WORKING_STATE){
         workState = MANAGING_STATE;
+        RTC.read(currentTime);
         showWatchFace(true);
       } else if (workState == MANAGING_STATE) {
         workState = HYPERVISING_STATE;
+        RTC.read(currentTime);
         showWatchFace(true);
       }
       // don't do anything if in vibe or hypervising state
@@ -190,9 +193,11 @@ void Watchy::handleButtonPress(){
     }else if(guiState == WATCHFACE_STATE){ // DOWN -> down the work list
       if (workState == HYPERVISING_STATE){
         workState = MANAGING_STATE;
+        RTC.read(currentTime);
         showWatchFace(true);
       } else if (workState == MANAGING_STATE) {
         workState = WORKING_STATE;
+        RTC.read(currentTime);
         showWatchFace(true);
       }
     }
