@@ -54,7 +54,7 @@ void Watchy::init(String datetime){
                 RTC.read(currentTime);           
                 showWatchFace(true); //partial updates on tick
             }
-            break;        
+            break;
         #endif
         case ESP_SLEEP_WAKEUP_EXT0: //RTC Alarm
             RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
@@ -155,6 +155,9 @@ void Watchy::handleButtonPress(){
       showMenu(menuIndex, false);//exit to menu if already in app
     }else if(guiState == FW_UPDATE_STATE){
       showMenu(menuIndex, false);//exit to menu if already in app
+    }else if(guiState == WATCHFACE_STATE){ // BACK -> VIBING_STATE
+      workState = VIBING_STATE;
+      showWatchFace(true);
     }
   }
   //Up Button
@@ -165,6 +168,15 @@ void Watchy::handleButtonPress(){
         menuIndex = MENU_LENGTH - 1;
       }    
       showMenu(menuIndex, true);
+    }else if(guiState == WATCHFACE_STATE){ // UP -> up the work list
+      if (workState == WORKING_STATE){
+        workState = MANAGING_STATE;
+        showWatchFace(true);
+      } else if (workState == MANAGING_STATE) {
+        workState = HYPERVISING_STATE;
+        showWatchFace(true);
+      }
+      // don't do anything if in vibe or hypervising state
     }
   }
   //Down Button
@@ -175,6 +187,14 @@ void Watchy::handleButtonPress(){
         menuIndex = 0;
       }
       showMenu(menuIndex, true);
+    }else if(guiState == WATCHFACE_STATE){ // DOWN -> down the work list
+      if (workState == HYPERVISING_STATE){
+        workState = MANAGING_STATE;
+        showWatchFace(true);
+      } else if (workState == MANAGING_STATE) {
+        workState = WORKING_STATE;
+        showWatchFace(true);
+      }
     }
   }
   

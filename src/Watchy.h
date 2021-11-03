@@ -12,7 +12,13 @@
 #include "DSEG7_Classic_Bold_53.h"
 #include "BLE.h"
 #include "bma.h"
-#include "config.h"    
+#include "config.h"
+
+//work states
+#define VIBING_STATE 0
+#define HYPERVISING_STATE 1
+#define MANAGING_STATE 2
+#define WORKING_STATE 3
 
 typedef struct weatherData{
     int8_t temperature;
@@ -24,6 +30,7 @@ class Watchy {
         static DS3232RTC RTC;
         static GxEPD2_BW<GxEPD2_154_D67, GxEPD2_154_D67::HEIGHT> display;
         tmElements_t currentTime;
+	    uint8_t workState = VIBING_STATE;
     public:
         Watchy();
         void init(String datetime = "");
