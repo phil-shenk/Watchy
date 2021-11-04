@@ -38,7 +38,6 @@ class Watchy {
         void vibMotor(uint8_t intervalMs = 100, uint8_t length = 20);
 
         void updateWorkState();
-        void drawWorkState();
         void handleButtonPress();
         void showMenu(byte menuIndex, bool partialRefresh);
         void showFastMenu(byte menuIndex);

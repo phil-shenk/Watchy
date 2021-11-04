@@ -65,7 +65,7 @@ void Watchy::init(String datetime){
             }
             break;
         case ESP_SLEEP_WAKEUP_EXT1: //button Press
-            Serial.println("BUTTON PRESSED\n");
+            Serial.println("BUTTON PRESSED");
             handleButtonPress();
             break;
         default: //reset
@@ -73,9 +73,11 @@ void Watchy::init(String datetime){
             _rtcConfig(datetime);
             #endif
             _bmaConfig();
+            Serial.println("waking from reset");
             showWatchFace(false); //full update on reset
             break;
     }
+    Serial.println("done handling wakeup, entering deep sleep.");
     deepSleep();
 }
 
@@ -88,35 +90,6 @@ void Watchy::deepSleep(){
   #endif 
   esp_sleep_enable_ext1_wakeup(BTN_PIN_MASK, ESP_EXT1_WAKEUP_ANY_HIGH); //enable deep sleep wake on button press
   esp_deep_sleep_start();
-}
-
-/** 
- * attempting to only update
- */ 
-void Watchy::updateWorkState(){
-  display.init(0, false); //_initial_refresh to false to prevent full update on init
-  display.setFullWindow();
-  drawWorkState();
-  display.display(true); //partial refresh
-  display.hibernate();
-  guiState = WATCHFACE_STATE;
-}
-
-void Watchy::drawWorkState() {
-	display.setFont(&FreeMonoBold9pt7b);
-	display.setCursor(100, 154);
-	if (workState == VIBING_STATE) {
-		display.println("VIBING");
-	}
-	else if (workState == HYPERVISING_STATE) {
-		display.println("HYPERV.");
-	}
-	else if (workState == MANAGING_STATE) {
-		display.println("MANAGING");
-	}
-	else if (workState == WORKING_STATE) {
-		display.println("WORKING");
-	}
 }
 
 void Watchy::_rtcConfig(String datetime){
@@ -146,9 +119,9 @@ void Watchy::handleButtonPress(){
   uint64_t wakeupBit = esp_sleep_get_ext1_wakeup_status();
   //Menu Button
   if (wakeupBit & MENU_BTN_MASK){
-    Serial.println("TWAS MENU BUTTON\n");
+    Serial.println("TWAS MENU BUTTON");
     if(guiState == WATCHFACE_STATE){//enter menu state if coming from watch face
-      Serial.println("ENTERING MENU\n");
+      Serial.println("ENTERING MENU");
       showMenu(menuIndex, false);
     }else if(guiState == MAIN_MENU_STATE){//if already in menu, then select menu item
       Serial.println("SELECTING ");
@@ -181,7 +154,7 @@ void Watchy::handleButtonPress(){
   }
   //Back Button
   else if (wakeupBit & BACK_BTN_MASK){
-    Serial.println("TWAS BACK BTN\n");
+    Serial.println("TWAS BACK BTN");
     if(guiState == MAIN_MENU_STATE){//exit to watch face if already in menu
       RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
       RTC.read(currentTime);
@@ -192,24 +165,21 @@ void Watchy::handleButtonPress(){
       showMenu(menuIndex, false);//exit to menu if already in app
     }else if(guiState == WATCHFACE_STATE){ // BACK -> VIBING_STATE
       if (workState == VIBING_STATE){  
-        Serial.println("vibe -> manage\n");
+        Serial.println("vibe -> manage");
         workState = MANAGING_STATE;
-        RTC.read(currentTime);
+        //RTC.read(currentTime);
         showWatchFace(true);
-        Serial.println("showed\n");
       }else{
-        Serial.println("X -> vibing\n");
+        Serial.println("X -> vibing");
         workState = VIBING_STATE;
-        RTC.read(currentTime);
+        //RTC.read(currentTime);
         showWatchFace(true);
-        Serial.println("showed\n");
       }
-      
     }
   }
   //Up Button
   else if (wakeupBit & UP_BTN_MASK){
-    Serial.println("TWAS UP BTN\n");
+    Serial.println("TWAS UP BTN");
     if(guiState == MAIN_MENU_STATE){//increment menu index
       menuIndex--;
       if(menuIndex < 0){
@@ -218,28 +188,22 @@ void Watchy::handleButtonPress(){
       showMenu(menuIndex, true);
     }else if(guiState == WATCHFACE_STATE){ // UP -> up the work list
       if (workState == WORKING_STATE){  
-        Serial.println("work -> manage\n");
+        Serial.println("work -> manage");
         workState = MANAGING_STATE;
-        //RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
-        RTC.read(currentTime);
+        //RTC.read(currentTime);
         showWatchFace(true);
-        Serial.println("showed\n");
-        //updateWorkState();
       } else if (workState == MANAGING_STATE) {
         workState = HYPERVISING_STATE;
-        Serial.println("manage -> hyper\n");
-        //RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
-        RTC.read(currentTime);
+        Serial.println("manage -> hyper");
+        //RTC.read(currentTime);
         showWatchFace(true);
-        Serial.println("showed\n");
-        //updateWorkState();
       }
       // don't do anything if in vibe or hypervising state
     }
   }
   //Down Button
   else if (wakeupBit & DOWN_BTN_MASK){
-    Serial.println("TWAS DOWN BTN\n");
+    Serial.println("TWAS DOWN BTN");
     if(guiState == MAIN_MENU_STATE){//decrement menu index
       menuIndex++;
       if(menuIndex > MENU_LENGTH - 1){
@@ -248,21 +212,15 @@ void Watchy::handleButtonPress(){
       showMenu(menuIndex, true);
     }else if(guiState == WATCHFACE_STATE){ // DOWN -> down the work list
       if (workState == HYPERVISING_STATE){
-        Serial.println("hyper -> manage\n");
+        Serial.println("hyper -> manage");
         workState = MANAGING_STATE;
-        //RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
-        RTC.read(currentTime);
+        //RTC.read(currentTime);
         showWatchFace(true);
-        Serial.println("showed\n");
-        //updateWorkState();
       } else if (workState == MANAGING_STATE) {
-        Serial.println("manage -> work\n");
+        Serial.println("manage -> work");
         workState = WORKING_STATE;
-        //RTC.alarm(ALARM_2);
-        RTC.read(currentTime);
+        //RTC.read(currentTime);
         showWatchFace(true);
-        Serial.println("showed\n");
-        //updateWorkState();
       }
     }
   }
@@ -687,10 +645,10 @@ void Watchy::showWatchFace(bool partialRefresh){
   display.init(0, false); //_initial_refresh to false to prevent full update on init
   display.setFullWindow();
   drawWatchFace();
-  drawWorkState();
   display.display(partialRefresh); //partial refresh
   display.hibernate();
   guiState = WATCHFACE_STATE;
+  Serial.println("showed");
 }
 
 void Watchy::drawWatchFace(){
