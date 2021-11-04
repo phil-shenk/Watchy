@@ -167,12 +167,12 @@ void Watchy::handleButtonPress(){
       if (workState == VIBING_STATE){  
         Serial.println("vibe -> manage");
         workState = MANAGING_STATE;
-        //RTC.read(currentTime);
+        RTC.read(currentTime);
         showWatchFace(true);
       }else{
         Serial.println("X -> vibing");
         workState = VIBING_STATE;
-        //RTC.read(currentTime);
+        RTC.read(currentTime);
         showWatchFace(true);
       }
     }
@@ -190,12 +190,12 @@ void Watchy::handleButtonPress(){
       if (workState == WORKING_STATE){  
         Serial.println("work -> manage");
         workState = MANAGING_STATE;
-        //RTC.read(currentTime);
+        RTC.read(currentTime);
         showWatchFace(true);
       } else if (workState == MANAGING_STATE) {
         workState = HYPERVISING_STATE;
         Serial.println("manage -> hyper");
-        //RTC.read(currentTime);
+        RTC.read(currentTime);
         showWatchFace(true);
       }
       // don't do anything if in vibe or hypervising state
@@ -214,12 +214,12 @@ void Watchy::handleButtonPress(){
       if (workState == HYPERVISING_STATE){
         Serial.println("hyper -> manage");
         workState = MANAGING_STATE;
-        //RTC.read(currentTime);
+        RTC.read(currentTime);
         showWatchFace(true);
       } else if (workState == MANAGING_STATE) {
         Serial.println("manage -> work");
         workState = WORKING_STATE;
-        //RTC.read(currentTime);
+        RTC.read(currentTime);
         showWatchFace(true);
       }
     }
