@@ -63,12 +63,12 @@ void Watchy::init(String datetime){
             if(guiState == WATCHFACE_STATE){
                 RTC.read(currentTime);
                 if (workState == WORKING_STATE){
-                    if(currentTime.Minute % 1 == 0){
-                        vibMotor(50,4);
+                    if(currentTime.Minute % 10 == 0){
+                        vibMotor(75,6);
                     }
                 }else if(workState == VIBING_STATE){
                     if(currentTime.Minute % 30 == 0){
-                        vibMotor(50,4);
+                        vibMotor(75,6);
                     }
                 }
                 showWatchFace(true); //partial updates on tick
