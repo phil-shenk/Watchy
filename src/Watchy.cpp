@@ -59,8 +59,18 @@ void Watchy::init(String datetime){
         #endif
         case ESP_SLEEP_WAKEUP_EXT0: //RTC Alarm
             RTC.alarm(ALARM_2); //resets the alarm flag in the RTC
+            // this is the alarm that goes off every minute to update the screen
             if(guiState == WATCHFACE_STATE){
                 RTC.read(currentTime);
+                if (workState == WORKING_STATE){
+                    if(currentTime.Minute % 1 == 0){
+                        vibMotor(50,4);
+                    }
+                }else if(workState == VIBING_STATE){
+                    if(currentTime.Minute % 30 == 0){
+                        vibMotor(50,4);
+                    }
+                }
                 showWatchFace(true); //partial updates on tick
             }
             break;
