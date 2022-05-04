@@ -1,7 +1,6 @@
 #include "Watchy_MacPaint.h"
-#include "settings.h"
 
-WatchyMacPaint watchy(settings);
+WatchyMacPaint watchy;
 
 void setup(){
   watchy.init();

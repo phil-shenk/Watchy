@@ -1,7 +1,6 @@
 #include "Watchy_Tetris.h"
-#include "settings.h"
 
-WatchyTetris watchy(settings);
+WatchyTetris watchy;
 
 void setup(){
   watchy.init();

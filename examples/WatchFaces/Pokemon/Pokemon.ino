@@ -1,7 +1,6 @@
 #include "Watchy_Pokemon.h"
-#include "settings.h"
 
-WatchyPokemon watchy(settings);
+WatchyPokemon watchy;
 
 void setup(){
   watchy.init();
