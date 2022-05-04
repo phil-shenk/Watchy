@@ -6,7 +6,7 @@
 
 class WatchyTetris : public Watchy{
     public:
-        using Watchy::Watchy;
+        WatchyTetris();
         void drawWatchFace();
 };
 

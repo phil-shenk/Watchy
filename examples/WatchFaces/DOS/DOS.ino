@@ -1,7 +1,6 @@
 #include "Watchy_DOS.h"
-#include "settings.h"
 
-WatchyDOS watchy(settings);
+WatchyDOS watchy;
 
 void setup(){
   watchy.init();
